@@ -2,6 +2,8 @@
 # If you need a different version of Node.js, specify the version number instead of 18
 FROM node:18
 
+RUN apt-get update && apt-get install -y postgresql-client
+
 # Create app directory
 WORKDIR /usr/src/app
 

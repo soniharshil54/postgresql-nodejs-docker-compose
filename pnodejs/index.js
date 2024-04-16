@@ -9,6 +9,8 @@ const pool = new Pool({
   port: 5432,             // Replace with your actual port if different
 });
 
+console.log("try connecting to postgress")
+
 pool.connect((err, client, done) => {
   if (err) {
     console.error('Connection error', err.stack);

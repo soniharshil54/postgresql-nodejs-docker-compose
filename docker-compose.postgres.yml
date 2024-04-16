@@ -46,4 +46,5 @@ services:
 
 networks:
   luxia_network:
+    name: luxia_network
     driver: bridge
