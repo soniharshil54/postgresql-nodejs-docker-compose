@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  luxia_backend:
+    container_name: luxia_backend
+    build:
+      context: ./pnodejs  # Path to the directory containing your Node.js app and Dockerfile
+      dockerfile: Dockerfile              # Assuming the Dockerfile is in the same directory as your Node.js app
+    restart: unless-stopped
+    depends_on:
+      luxia_db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DB_HOST: luxia_db                   # The host here is the service name of your PostgreSQL container
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: secret1                # Use the real password you've defined for your PostgreSQL service
+      DB_NAME: nobi_dev
+    ports:
+      - "3009:3000"                      # Map the port of the Node.js app if you want to access it from the host
+    networks:
+      - luxia_network
+
+  luxia_db:
+    container_name: luxia_db
+    image: postgres:15.2-alpine3.17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret1
+      POSTGRES_DB: nobi_dev
+    volumes:
+      - ./postgres:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      - luxia_network
+
+networks:
+  luxia_network:
+    driver: bridge
